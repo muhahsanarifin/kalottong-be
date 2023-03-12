@@ -1,2 +1,25 @@
-src
 node_modules
+src/configs/nodemailer.js
+
+# models
+src/modules/subtasks.js
+src/modules/tasks.js
+src/modules/users.js
+
+# controllers
+src/controllers/subtasks.js
+src/controllers/tasks.js
+src/controllers/users.js
+
+# controllers
+src/controllers/subtasks.js
+
+# routes
+src/routes/users.js
+src/routes/tasks.js
+src/routes/subtasks.js
+
+# middlewares
+src/middlewares
+
+.env
