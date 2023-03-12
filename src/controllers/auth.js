@@ -1,4 +1,4 @@
-const authModules = require("../modules/auth");
+const authModules = require("../models/auth");
 
 const register = async (req, res) => {
   try {
