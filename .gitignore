@@ -2,9 +2,9 @@ node_modules
 src/configs/nodemailer.js
 
 # models
-src/modules/subtasks.js
-src/modules/tasks.js
-src/modules/users.js
+src/models/subtasks.js
+src/models/tasks.js
+src/models/users.js
 
 # controllers
 src/controllers/subtasks.js
