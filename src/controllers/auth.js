@@ -39,6 +39,8 @@ const login = async (req, res) => {
 
     const result = checkEmail.rows[0];
 
+    // console.log("User:", result);
+
     const response = await authModules.login(result, req.body);
     res.status(200).json({
       data: response,

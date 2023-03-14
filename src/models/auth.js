@@ -22,7 +22,7 @@ const register = (body) => {
           return reject(error);
         }
 
-        console.log("Result:", result);
+        // console.log("Result:", result);
         return resolve(result);
       });
     });
@@ -32,7 +32,8 @@ const register = (body) => {
 const getEmail = (body) => {
   return new Promise((resolve, reject) => {
     const { email } = body;
-    const query = "select * from users where email = $1";
+    const query =
+      "select u.id, u.email, u.password, u.firstname, u.lastname, u.image, r.name, u.created_at, u.updated_at, u.last_login, u.key_change_password from users u join roles r on u.role_id  = r.id where email = $1";
 
     db.query(query, [email], (error, result) => {
       if (error) {
@@ -57,7 +58,7 @@ const getToken = (token) => {
 
 const login = (result, body) => {
   return new Promise((resolve, reject) => {
-    const { id, first_name, last_name, password, role_id } = result;
+    const { id, first_name, last_name, password, name } = result;
 
     bcrypt.compare(body.password, password, (error, same) => {
       if (error) {
@@ -74,7 +75,7 @@ const login = (result, body) => {
         user_id: id,
         first_name: first_name,
         last_name: last_name,
-        role_id: role_id,
+        role: name,
       };
 
       const jwtOption = {
@@ -100,7 +101,7 @@ const login = (result, body) => {
         return resolve({
           first_name: payload.first_name,
           last_name: payload.last_name,
-          role_id: payload.role_id,
+          role: payload.role,
           token,
         });
       });
