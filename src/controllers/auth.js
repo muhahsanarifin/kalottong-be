@@ -29,4 +29,29 @@ const register = async (req, res) => {
   }
 };
 
-module.exports = { register };
+const login = async (req, res) => {
+  try {
+    const checkEmail = await authModules.getEmail(req.body);
+    if (checkEmail.rows.length === 0) {
+      return res.status(401).json({
+        msg: "Email/Password is wrong",
+      });
+    }
+
+    const result = checkEmail.rows[0];
+
+    const response = await authModules.login(result, req.body);
+    console.log("Response login: ", response)
+    res.status(200).json({
+      data: response,
+      msg: "Login success",
+    });
+  } catch (obErr) {
+    const statusCode = obErr.statusCode || 500;
+    res.status(statusCode).json({
+      msg: obErr.error?.msg,
+    });
+  }
+};
+
+module.exports = { register, login };
