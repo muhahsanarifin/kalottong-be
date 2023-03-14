@@ -18,11 +18,10 @@ const register = async (req, res) => {
 
     const response = await authModules.register(req.body);
     res.status(201).json({
+      data: response.rows,
       msg: "Create account successfully",
     });
-    console.log("Result responses: ", response.rows);
   } catch (error) {
-    console.log(error);
     res.status(500).json({
       msg: "Internal server error",
     });
@@ -41,7 +40,6 @@ const login = async (req, res) => {
     const result = checkEmail.rows[0];
 
     const response = await authModules.login(result, req.body);
-    console.log("Response login: ", response)
     res.status(200).json({
       data: response,
       msg: "Login success",
@@ -54,4 +52,22 @@ const login = async (req, res) => {
   }
 };
 
-module.exports = { register, login };
+const logout = async (req, res) => {
+  try {
+    const bearerToken = req.header("Authorization");
+
+    const response = await authModules.logout(bearerToken.split(" ")[1]);
+
+    // console.log("User Payload: ", req.userPayload);
+    res.status(200).json({
+      data: response.rows[0],
+      msg: "Logout success",
+    });
+  } catch (error) {
+    res.status(500).json({
+      msg: "Internet server error",
+    });
+  }
+};
+
+module.exports = { register, login, logout };
