@@ -40,4 +40,40 @@ const editTask = (params, body) => {
   });
 };
 
-module.exports = { createTasks, editTask };
+const deleteTask = (params) => {
+  const { id } = params;
+  return new Promise((resolve, reject) => {
+    const query = "delete from tasks where id = $1 returning *";
+    db.query(query, [id], (error, result) => {
+      if (error) {
+        return reject(error);
+      }
+      resolve(result);
+      console.log("Result: ", result);
+    });
+  });
+};
+
+const getTasks = (payload) => {
+  const { user_id } = payload;
+  return new Promise((resolve, reject) => {
+    const query = "select * from tasks where user_id = $1";
+
+    db.query(query, [user_id], (error, result) => {
+      // console.log("Result: ", result);
+      if (result.rows.length < 1) {
+        return reject({
+          data: result.rows,
+          statusCode: 404,
+          msg: "Not Found",
+        });
+      }
+      if (error) {
+        return reject(error);
+      }
+      return resolve(result);
+    });
+  });
+};
+
+module.exports = { createTasks, editTask, deleteTask, getTasks };

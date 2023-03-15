@@ -31,4 +31,34 @@ const editTask = async (req, res) => {
   }
 };
 
-module.exports = { createTasks, editTask };
+const deleteTask = async (req, res) => {
+  try {
+    const response = await tasksModels.deleteTask(req.params);
+    res.status(200).json({
+      data: response.rows,
+      msg: "Delete task success",
+    });
+  } catch (error) {
+    res.status(500).json({
+      msg: "Internet server error",
+    });
+  }
+};
+
+const getTasks = async (req, res) => {
+  try {
+    const response = await tasksModels.getTasks(req.userPayload);
+    res.status(200).json({
+      data: response.rows,
+      msg: "Get data success",
+    });
+  } catch (obErr) {
+    const statusCode = obErr.statusCode || 500;
+    res.status(statusCode).json({
+      msg: obErr?.msg,
+      data: obErr?.data,
+    });
+  }
+};
+
+module.exports = { createTasks, editTask, deleteTask, getTasks };

@@ -16,4 +16,12 @@ tasksRouter.patch(
   tasksControllers.editTask
 );
 
+tasksRouter.delete(
+  "/delete/:id",
+  authMiddleware.checkLogin,
+  tasksControllers.deleteTask
+);
+
+tasksRouter.get("/", authMiddleware.checkLogin, tasksControllers.getTasks);
+
 module.exports = tasksRouter;
