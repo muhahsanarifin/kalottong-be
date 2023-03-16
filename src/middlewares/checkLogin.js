@@ -15,7 +15,8 @@ const checkLogin = async (req, res, next) => {
 
   const checkToken = await authModels.getToken(bearerToken.split(" ")[1]);
 
-  console.log("Token", checkToken);
+  // console.log("Token", checkToken);
+
   if (checkToken.rows.length === 0) {
     return res.status(403).json({
       msg: "You have to login first",
