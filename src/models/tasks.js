@@ -49,7 +49,7 @@ const deleteTask = (params) => {
         return reject(error);
       }
       resolve(result);
-      console.log("Result: ", result);
+      // console.log("Result: ", result);
     });
   });
 };
