@@ -1,27 +1,27 @@
 const express = require("express");
 const tasksRouter = express.Router();
-const authMiddleware = require("../middlewares/checkLogin");
+const tasksMiddleware = require("../middlewares/checkLogin");
 const tasksControllers = require("../controllers/tasks");
 
 // const checkRolesMiddleware = require("../middlewares/checkRoles");
 
 tasksRouter.post(
   "/create",
-  authMiddleware.checkLogin,
+  tasksMiddleware.checkLogin,
   tasksControllers.createTasks
 );
 tasksRouter.patch(
   "/edit/:id",
-  authMiddleware.checkLogin,
+  tasksMiddleware.checkLogin,
   tasksControllers.editTask
 );
 
 tasksRouter.delete(
   "/delete/:id",
-  authMiddleware.checkLogin,
+  tasksMiddleware.checkLogin,
   tasksControllers.deleteTask
 );
 
-tasksRouter.get("/", authMiddleware.checkLogin, tasksControllers.getTasks);
+tasksRouter.get("/", tasksMiddleware.checkLogin, tasksControllers.getTasks);
 
 module.exports = tasksRouter;
