@@ -1,29 +1,29 @@
 const express = require("express");
 const subtasksRouter = express.Router();
-const authMiddleware = require("../middlewares/checkLogin");
+const subtasksMiddleware = require("../middlewares/checkLogin");
 const subtasksControllers = require("../controllers/subtasks");
 
 subtasksRouter.post(
   "/create",
-  authMiddleware.checkLogin,
+  subtasksMiddleware.checkLogin,
   subtasksControllers.createSubtask
 );
 
 subtasksRouter.delete(
   "/delete/:id",
-  authMiddleware.checkLogin,
+  subtasksMiddleware.checkLogin,
   subtasksControllers.deleteSubtask
 );
 
 subtasksRouter.patch(
   "/edit/:id",
-  authMiddleware.checkLogin,
+  subtasksMiddleware.checkLogin,
   subtasksControllers.editSubtask
 );
 
 subtasksRouter.get(
   "/",
-  authMiddleware.checkLogin,
+  subtasksMiddleware.checkLogin,
   subtasksControllers.getSubtasks
 );
 
