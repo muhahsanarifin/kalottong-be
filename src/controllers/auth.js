@@ -56,11 +56,14 @@ const login = async (req, res) => {
 
 const logout = async (req, res) => {
   try {
+    // console.log("User Payload: ", req.userPayload);
+    
     const bearerToken = req.header("Authorization");
 
     const response = await authModules.logout(bearerToken.split(" ")[1]);
 
-    // console.log("User Payload: ", req.userPayload);
+    await authModules.lastLogin(req.userPayload);
+
     res.status(200).json({
       data: response.rows[0],
       msg: "Logout success",

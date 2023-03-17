@@ -89,20 +89,20 @@ const login = (result, body) => {
         }
 
         const query =
-          "insert into tokens (user_id, name, created_at) values ($1, $2, $3) returning id";
+          "insert into tokens (user_id, name, created_at) values ($1, $2, $3) returning user_id";
 
         db.query(query, [id, token, new Date()], (error, result) => {
           if (error) {
             return reject(error);
           }
-          resolve(result);
-        });
-
-        return resolve({
-          first_name: payload.first_name,
-          last_name: payload.last_name,
-          role: payload.role,
-          token,
+          // console.log("Result:", result);
+          return resolve({
+            user_id: result.rows[0].user_id,
+            first_name: payload.first_name,
+            last_name: payload.last_name,
+            role: payload.role,
+            token,
+          });
         });
       });
     });
@@ -121,4 +121,19 @@ const logout = (token) => {
   });
 };
 
-module.exports = { register, getEmail, login, logout, getToken };
+const lastLogin = (payload) => {
+  const { user_id } = payload;
+  return new Promise((resolve, reject) => {
+    const query =
+      "update users set updated_at = $2, last_login = $3 where id = $1";
+
+    db.query(query, [user_id, new Date(), new Date()], (error, result) => {
+      if (error) {
+        return reject(error);
+      }
+      return resolve(result);
+    });
+  });
+};
+
+module.exports = { register, getEmail, login, logout, getToken, lastLogin };
