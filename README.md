@@ -40,8 +40,8 @@
 | --------- | :---------------------------: | :------- |
 | /auth     |        `POST` `DELETE`        | Auth     |
 | /users    |     `POST` `GET` `PATCH`      | Users    |
-| /products | `POST` `GET` `PATCH` `DELETE` | Tasks    |
-| /promos   | `POST` `GET` `PATCH` `DELETE` | Subtasks |
+| /tasks    | `POST` `GET` `PATCH` `DELETE` | Tasks    |
+| /subtasks | `POST` `GET` `PATCH` `DELETE` | Subtasks |
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
