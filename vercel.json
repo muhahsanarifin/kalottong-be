@@ -2,11 +2,13 @@
   "builds": [
     {
       "src": "./index.js",
-      "use": "@varcel/node"
+      "use": "@vercel/node"
     }
   ],
-  "rewrites": [{
-    "source": "/(.*)",
-    "destination": "/"
-  }]
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/"
+    }
+  ]
 }
