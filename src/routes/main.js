@@ -11,8 +11,8 @@ mainRouter.use("/users", usersRouter);
 mainRouter.use("/tasks", tasksRouter);
 mainRouter.use("/subtasks", subtasksRouter);
 
-// mainRouter.get("/", (req, res) => {
-//   res.send("Welcome to Kalottong API");
-// });
+mainRouter.get("/", (req, res) => {
+  res.send("Welcome to kalottong API");
+});
 
 module.exports = mainRouter;
