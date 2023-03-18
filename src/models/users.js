@@ -32,7 +32,7 @@ const uploadImageProfile = (payload, file, body) => {
       "update users set image = $2, updated_at = $3 where id = $1 returning image";
 
     db.query(query, [user_id, image, new Date()], (error, result) => {
-      console.log(result);
+      // console.log(result);
       if (error) {
         return reject(error);
       }
