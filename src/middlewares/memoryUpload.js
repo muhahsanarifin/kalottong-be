@@ -10,7 +10,7 @@ const fileFilter = (req, file, cb) => {
   const allowedExt = /jpeg|jpg|png|webp/;
   if (!allowedExt.test(extName)) {
     return cb({
-      msg: "Only use allowed extension (JPEG, JPG, PNG WEB",
+      msg: "Only use allowed extension (JPEG, JPG, PNG WEBP",
     });
   }
   cb(null, true);
