@@ -1,0 +1,12 @@
+{
+  "builds": [
+    {
+      "src": "./index.js",
+      "use": "@varcel/node"
+    }
+  ],
+  "rewrites": [{
+    "source": "/(.*)",
+    "destination": "/"
+  }]
+}
