@@ -35,7 +35,7 @@ const errorHandler = (err, res, next) => {
     if (err.code === "LIMIT_FILE_SIZE") {
       return res.status(400).json({
         data: null,
-        msg: "File size it too large. Allowed file size less than equel to 2mb",
+        msg: "File size it too large. Allowed file size less than equel to 200 kb",
       });
     }
     if (err.code === "LIMIT_FILE_COUNT") {
