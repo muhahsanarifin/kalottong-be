@@ -1,25 +1,11 @@
 node_modules
 src/configs/nodemailer.js
 
-# models
-src/models/subtasks.js
-src/models/tasks.js
-src/models/users.js
+# Helper
+src/helpers
 
-# controllers
-src/controllers/subtasks.js
-src/controllers/tasks.js
-src/controllers/users.js
+# Middlewares
+src/middlewares/validate.js
 
-# controllers
-src/controllers/subtasks.js
-
-# routes
-src/routes/users.js
-src/routes/tasks.js
-src/routes/subtasks.js
-
-# middlewares
-src/middlewares
-
+# Environment
 .env
