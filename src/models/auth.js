@@ -6,16 +6,16 @@ const jwt = require("jsonwebtoken");
 
 const register = (body) => {
   return new Promise((resolve, reject) => {
-    const { email, password } = body;
+    const { email, password, gender_id } = body;
     bcrypt.hash(password, 10, (error, hashPassword) => {
       if (error) {
         return reject(error);
       }
 
       const query =
-        "insert into users (email, password, role_id, created_at) values ($1, $2, $3, $4) returning email";
+        "insert into users (email, password, role_id, gender_id, created_at) values ($1, $2, $3, $4, $5) returning email";
 
-      const values = [email, hashPassword, "3", new Date()];
+      const values = [email, hashPassword, "3", gender_id, new Date()];
 
       db.query(query, values, (error, result) => {
         if (error) {
@@ -33,7 +33,7 @@ const getEmail = (body) => {
   return new Promise((resolve, reject) => {
     const { email } = body;
     const query =
-      "select u.id, u.email, u.password, u.firstname, u.lastname, u.image, r.name, u.created_at, u.updated_at, u.last_login, u.key_change_password from users u join roles r on u.role_id  = r.id where email = $1";
+      "select u.id, u.email, u.password, u.firstname, u.lastname, g.name as gender , u.image, r.name as role, u.created_at, u.updated_at, u.last_login, u.key_change_password from users u join roles r on u.role_id  = r.id join genders g on u.gender_id = g.id where u.email = $1";
 
     db.query(query, [email], (error, result) => {
       if (error) {
@@ -58,7 +58,7 @@ const getToken = (token) => {
 
 const login = (result, body) => {
   return new Promise((resolve, reject) => {
-    const { id, first_name, last_name, password, name } = result;
+    const { id, first_name, last_name, password, role } = result;
 
     bcrypt.compare(body.password, password, (error, same) => {
       if (error) {
@@ -75,7 +75,7 @@ const login = (result, body) => {
         user_id: id,
         first_name: first_name,
         last_name: last_name,
-        role: name,
+        role: role,
       };
 
       const jwtOption = {
@@ -136,4 +136,24 @@ const lastLogin = (payload) => {
   });
 };
 
-module.exports = { register, getEmail, login, logout, getToken, lastLogin };
+const getRoles = () => {
+  return new Promise((resolve, reject) => {
+    const query = "select * from roles";
+    db.query(query, (error, result) => {
+      if (error) {
+        return reject(error);
+      }
+      return resolve(result);
+    });
+  });
+};
+
+module.exports = {
+  register,
+  getEmail,
+  login,
+  logout,
+  getToken,
+  lastLogin,
+  getRoles,
+};

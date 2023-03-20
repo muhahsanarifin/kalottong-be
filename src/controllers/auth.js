@@ -57,7 +57,7 @@ const login = async (req, res) => {
 const logout = async (req, res) => {
   try {
     // console.log("User Payload: ", req.userPayload);
-    
+
     const bearerToken = req.header("Authorization");
 
     const response = await authModules.logout(bearerToken.split(" ")[1]);
@@ -75,4 +75,18 @@ const logout = async (req, res) => {
   }
 };
 
-module.exports = { register, login, logout };
+const getRoles = async (req, res) => {
+  try {
+    const response = await authModules.getRoles();
+    res.status(200).json({
+      data: response.rows,
+      msg: "Success get data",
+    });
+  } catch (error) {
+    res.status(500).json({
+      msg: "Internet server error",
+    });
+  }
+};
+
+module.exports = { register, login, logout, getRoles };
