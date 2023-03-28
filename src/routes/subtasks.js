@@ -27,4 +27,10 @@ subtasksRouter.get(
   subtasksControllers.getSubtasks
 );
 
+subtasksRouter.get(
+  "/:taskId",
+  subtasksMiddleware.checkLogin,
+  subtasksControllers.getSubTask
+);
+
 module.exports = subtasksRouter;

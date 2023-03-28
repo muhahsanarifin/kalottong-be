@@ -52,4 +52,24 @@ const getSubtasks = async (req, res) => {
   }
 };
 
-module.exports = { createSubtask, deleteSubtask, editSubtask, getSubtasks };
+const getSubTask = async (req, res) => {
+  try {
+    const response = await subtasksModals.getSubtask(req.params);
+    res.status(200).json({
+      data: response.rows,
+      msg: "Get data success",
+    });
+  } catch (error) {
+    res.status(500).json({
+      msg: "Internet server error",
+    });
+  }
+};
+
+module.exports = {
+  createSubtask,
+  deleteSubtask,
+  editSubtask,
+  getSubtasks,
+  getSubTask,
+};

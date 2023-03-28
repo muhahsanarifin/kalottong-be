@@ -58,4 +58,25 @@ const getSubtasks = () => {
   });
 };
 
-module.exports = { createSubtask, deleteSubtask, editSubtask, getSubtasks };
+const getSubtask = (params) => {
+  const { taskId } = params;
+
+  return new Promise((resolve, reject) => {
+    const query = "select * from subtasks where tasks_id = $1";
+
+    db.query(query, [taskId], (error, result) => {
+      if (error) {
+        return reject(error);
+      }
+      return resolve(result);
+    });
+  });
+};
+
+module.exports = {
+  createSubtask,
+  deleteSubtask,
+  editSubtask,
+  getSubtasks,
+  getSubtask,
+};
