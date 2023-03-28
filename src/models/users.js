@@ -25,13 +25,19 @@ const uploadImageProfile = (payload, file, body) => {
   const { user_id } = payload;
   let { image } = body;
 
+  console.log("Image:", image);
+
+  // Set key as image.
   image = file.secure_url;
+
+  // Get url start from image/upload.
+  const sliceUrlImage = image.slice(image.indexOf("image"));
 
   return new Promise((resolve, reject) => {
     const query =
       "update users set image = $2, updated_at = $3 where id = $1 returning image";
 
-    db.query(query, [user_id, image, new Date()], (error, result) => {
+    db.query(query, [user_id, sliceUrlImage, new Date()], (error, result) => {
       // console.log(result);
       if (error) {
         return reject(error);
