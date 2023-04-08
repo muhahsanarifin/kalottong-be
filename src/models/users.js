@@ -6,7 +6,7 @@ const updateProfile = (payload, body) => {
 
   return new Promise((resolve, reject) => {
     const query =
-      "update users set firstname = $2, lastname = $3, gender_id = $4, updated_at = $5 where id = $1 returning *";
+      "update users set firstname = $2, lastname = $3, gender_id = $4, updated_at = $5 where id = $1 returning id, email";
     db.query(
       query,
       [user_id, firstname, lastname, gender_id, new Date()],
@@ -23,9 +23,8 @@ const updateProfile = (payload, body) => {
 const uploadImageProfile = (payload, file, body) => {
   // console.log(file);
   const { user_id } = payload;
-  let { image } = body;
 
-  console.log("Image:", image);
+  let { image } = body;
 
   // Set key as image.
   image = file.secure_url;
