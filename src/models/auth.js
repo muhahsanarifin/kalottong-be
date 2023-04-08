@@ -21,8 +21,6 @@ const register = (body) => {
         if (error) {
           return reject(error);
         }
-
-        // console.log("Result:", result);
         return resolve(result);
       });
     });
@@ -33,7 +31,7 @@ const getEmail = (body) => {
   return new Promise((resolve, reject) => {
     const { email } = body;
     const query =
-      "select u.id, u.email, u.password, u.firstname, u.lastname, g.name as gender , u.image, r.name as role, u.created_at, u.updated_at, u.last_login, u.key_change_password from users u join roles r on u.role_id  = r.id join genders g on u.gender_id = g.id where u.email = $1";
+      "select u.id, u.email, u.password, u.firstname, u.lastname, g.name as gender, u.image, r.name as role, u.created_at, u.updated_at, u.last_login, u.key_change_password from users u join roles r on u.role_id  = r.id join genders g on u.gender_id = g.id where u.email = $1";
 
     db.query(query, [email], (error, result) => {
       if (error) {
