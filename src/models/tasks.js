@@ -1,12 +1,13 @@
 const db = require("../configs/postgre");
 
 const createTasks = (user_id, body) => {
-  const { title, description } = body;
+  const { title, description, created_at } = body;
+
   return new Promise((resolve, reject) => {
     const query =
       "insert into tasks (user_id, status_id, title, description, created_at) values ($1, $2, $3, $4, $5)";
 
-    const values = [user_id, "1", title, description, new Date()];
+    const values = [user_id, "1", title, description, created_at];
 
     db.query(query, values, (error, result) => {
       if (error) {
@@ -29,9 +30,6 @@ const editTask = (params, body) => {
     const values = [id, title, description, new Date()];
 
     db.query(query, values, (error, result) => {
-      // console.log("Query:", query);
-      // console.log("Values:", values);
-      // console.log("Result:", result);
       if (error) {
         return reject(error);
       }
@@ -60,7 +58,6 @@ const getTasks = (payload) => {
     const query = "select * from tasks where user_id = $1";
 
     db.query(query, [user_id], (error, result) => {
-      // console.log("Result: ", result);
       if (result.rows.length < 1) {
         return reject({
           data: result.rows,
