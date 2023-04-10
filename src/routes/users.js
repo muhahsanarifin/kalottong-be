@@ -27,6 +27,16 @@ usersRouter.patch(
   usersControllers.uploadImageProfile
 );
 
-usersRouter.get("/profile", usersMiddleware.checkLogin, usersControllers.getProfile);
+usersRouter.patch(
+  "/notelp/edit",
+  usersMiddleware.checkLogin,
+  usersControllers.updateNoTelp
+);
+
+usersRouter.get(
+  "/profile",
+  usersMiddleware.checkLogin,
+  usersControllers.getProfile
+);
 
 module.exports = usersRouter;

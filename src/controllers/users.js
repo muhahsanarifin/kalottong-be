@@ -32,6 +32,28 @@ const uploadImageProfile = async (req, res) => {
   }
 };
 
+const updateNoTelp = async (req, res) => {
+  try {
+    const duplicateNoTelp = await usersModels.getNoTelp(req.body);
+
+    if (duplicateNoTelp.rows.length >= 3) {
+      return res.status(400).json({
+        msg: `${req.body.notelp} is used maximum 3 times. Please, use another phone number.`,
+      });
+    }
+
+    const response = await usersModels.updateNoTelp(req.userPayload, req.body);
+    res.status(200).json({
+      data: response.rows,
+      msg: "Update success",
+    });
+  } catch (error) {
+    res.status(500).json({
+      msg: "Internet server error",
+    });
+  }
+};
+
 const getProfile = async (req, res) => {
   try {
     const response = await usersModels.getProfile(req.userPayload);
@@ -46,4 +68,9 @@ const getProfile = async (req, res) => {
   }
 };
 
-module.exports = { updateProfile, uploadImageProfile, getProfile };
+module.exports = {
+  updateProfile,
+  uploadImageProfile,
+  getProfile,
+  updateNoTelp,
+};
