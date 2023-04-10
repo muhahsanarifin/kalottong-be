@@ -19,7 +19,7 @@ const checkLogin = async (req, res, next) => {
 
   if (checkToken.rows.length === 0) {
     return res.status(403).json({
-      msg: "You have to login first",
+      msg: "You have to login first!",
     });
   }
 
