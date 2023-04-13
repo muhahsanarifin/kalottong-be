@@ -62,9 +62,7 @@ const login = async (req, res) => {
     });
   } catch (obErr) {
     const statusCode = obErr.statusCode || 500;
-    res.status(statusCode).json({
-      msg: obErr.error,
-    });
+    res.status(statusCode).send(obErr.error);
   }
 };
 
