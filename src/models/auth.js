@@ -1,8 +1,7 @@
 const bcrypt = require("bcrypt");
 const db = require("../configs/postgre");
 const jwt = require("jsonwebtoken");
-// const { DateTime } = require("luxon");
-// const date = require("../helpers/date");
+const { ErrorResponse } = require("../helpers/response");
 
 const register = (body) => {
   return new Promise((resolve, reject) => {
@@ -64,7 +63,7 @@ const login = (result, body) => {
       }
       if (!same) {
         return reject({
-          error: new Error("Email/Password is wrong"),
+          error: new ErrorResponse("Wrong password"),
           statusCode: 401,
         });
       }

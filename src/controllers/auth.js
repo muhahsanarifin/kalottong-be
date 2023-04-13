@@ -1,5 +1,6 @@
 const authModules = require("../models/auth");
 
+
 const register = async (req, res) => {
   try {
     const emailRegex = new RegExp("[a-z0-9]+@[a-z]+.[a-z]{2,3}");
@@ -16,7 +17,7 @@ const register = async (req, res) => {
       });
     }
 
-    if(req.body.password.length < 8) {
+    if (req.body.password.length < 8) {
       return res.status(400).json({
         msg: "Password at least eight characters",
       });
@@ -43,9 +44,10 @@ const register = async (req, res) => {
 const login = async (req, res) => {
   try {
     const checkEmail = await authModules.getEmail(req.body);
+
     if (checkEmail.rows.length === 0) {
       return res.status(401).json({
-        msg: "Email/Password is wrong",
+        msg: "Email is not registered",
       });
     }
 
@@ -61,7 +63,7 @@ const login = async (req, res) => {
   } catch (obErr) {
     const statusCode = obErr.statusCode || 500;
     res.status(statusCode).json({
-      msg: obErr.error?.msg,
+      msg: obErr.error,
     });
   }
 };
