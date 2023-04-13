@@ -55,7 +55,7 @@ const getToken = (token) => {
 
 const login = (result, body) => {
   return new Promise((resolve, reject) => {
-    const { id, first_name, last_name, password, role } = result;
+    const { id, email, first_name, last_name, password, role } = result;
 
     bcrypt.compare(body.password, password, (error, same) => {
       if (error) {
@@ -70,6 +70,7 @@ const login = (result, body) => {
 
       const payload = {
         user_id: id,
+        email: email,
         first_name: first_name,
         last_name: last_name,
         role: role,
@@ -95,6 +96,7 @@ const login = (result, body) => {
           // console.log("Result:", result);
           return resolve({
             user_id: result.rows[0].user_id,
+            email: payload.email,
             first_name: payload.first_name,
             last_name: payload.last_name,
             role: payload.role,
