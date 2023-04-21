@@ -47,11 +47,8 @@ const deleteTask = async (req, res) => {
 
 const getTasks = async (req, res) => {
   try {
-    const response = await tasksModels.getTasks(req.userPayload);
-    res.status(200).json({
-      data: response.rows,
-      msg: "Get data success",
-    });
+    const response = await tasksModels.getTasks(req.userPayload, req.query);
+    res.status(200).send(response);
   } catch (obErr) {
     const statusCode = obErr.statusCode || 500;
     res.status(statusCode).json({

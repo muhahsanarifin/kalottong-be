@@ -52,12 +52,96 @@ const deleteTask = (params) => {
   });
 };
 
-const getTasks = (payload) => {
+const getTasks = (payload, params) => {
   const { user_id } = payload;
   return new Promise((resolve, reject) => {
-    const query = "select * from tasks where user_id = $1";
+    let query;
+    let expression;
+    let condition;
+
+    query =
+      "select t.id, t.user_id, s.name as status, t.title, t.description, t.created_at, t.updated_at from tasks t join status s on t.status_id = s.id where t.user_id = $1 ";
+
+    let link = "/tasks?";
+
+    switch (params.sort || params.status) {
+      // Sort
+      case "a-z":
+        expression = "order by t.title asc ";
+        query += expression;
+        link += "sort=" + `${params.sort}` + "&";
+        break;
+      case "z-a":
+        expression = "order by t.title desc ";
+        query += expression;
+        link += "sort=" + `${params.sort}` + "&";
+        break;
+      case "old":
+        expression = "order by t.created_at asc ";
+        query += expression;
+        link += "sort=" + `${params.sort}` + "&";
+        break;
+      case "new":
+        expression = "order by t.created_at desc ";
+        query += expression;
+        link += "sort=" + `${params.sort}` + "&";
+        break;
+      case "updated":
+        expression = "order by t.created_at desc ";
+        query += expression;
+        link += "sort=" + `${params.sort}` + "&";
+        break;
+      // Status
+      case `${params.status}`:
+        query += "and s.name = " + `'${params.status}'`;
+        link += "status=" + `${params.status}` + "&";
+        break;
+      // Sort & Status
+      case params.status === "ongoing" && params.sort === "old":
+        condition = "and s.name = 'ongoing' ";
+        expression = "order by t.created_at asc ";
+        query += condition + expression;
+        link +=
+          "status=" + `${params.status}` + "sort=" + `${params.sort}` + "&";
+        break;
+      case params.status === "ongoing" && params.sort === "a-z":
+        condition = "and s.name = 'ongoing' ";
+        expression = "order by t.title asc ";
+        query += condition + expression;
+        link +=
+          "status=" + `${params.status}` + "sort=" + `${params.sort}` + "&";
+        break;
+      case params.status === "ongoing" && params.sort === "new":
+        condition = "and s.name = 'ongoing' ";
+        expression = "order by t.created_at desc ";
+        link +=
+          "status=" + `${params.status}` + "sort=" + `${params.sort}` + "&";
+        break;
+      case params.status === "ongoing" && params.sort === "updated":
+        condition = "and s.name = 'ongoing' ";
+        expression = "order by t.updated_at desc ";
+        link +=
+          "status=" + `${params.status}` + "sort=" + `${params.sort}` + "&";
+      default:
+        query;
+    }
+
+    let limitQuery = "";
+    let values = [];
+
+    if (params.page && params.limit) {
+      let page = Number(params.page);
+      let limit = Number(params.limit);
+      let offset = (page - 1) * limit;
+      limitQuery += query + "limit $2 offset $3";
+      values.push(user_id, limit, offset);
+    } else {
+      limitQuery = query;
+      values.push(user_id);
+    }
 
     db.query(query, [user_id], (error, result) => {
+      // console.log("Query:", query);
       if (result.rows.length < 1) {
         return reject({
           data: result.rows,
@@ -68,7 +152,65 @@ const getTasks = (payload) => {
       if (error) {
         return reject(error);
       }
-      return resolve(result);
+      db.query(limitQuery, values, (error, queryResult) => {
+        // console.log("limit Query:", limitQuery);
+        if (result.rows.length < 1) {
+          return reject({
+            data: queryResult.rows,
+            statusCode: 404,
+            msg: "Not Found",
+          });
+        }
+        if (error) {
+          return reject(error);
+        }
+
+        let nextResponse = null;
+        let previousResponse = null;
+
+        if (params.page && params.limit) {
+          let page = parseInt(params.page);
+          let limit = parseInt(params.limit);
+          let start = (page - 1) * limit;
+          let end = page * limit;
+          let next = "";
+          let previous = "";
+
+          const nextData = Math.ceil(result.rowCount / limit);
+          if (start <= result.rowCount) {
+            next = page + 1;
+          }
+          if (end > 0) {
+            previous = page - 1;
+          }
+          if (parseInt(next) <= parseInt(nextData)) {
+            nextResponse =
+              `${link}` + "page=" + `${next}` + "&" + "limit=" + `${limit}`;
+          }
+          if (parseInt(previous) !== 0) {
+            previousResponse =
+              `${link}` + "page=" + `${previous}` + "&" + "limit=" + `${limit}`;
+          }
+          let sendResponse = {
+            totalData: result.rowCount,
+            next: nextResponse,
+            previous: previousResponse,
+            totalPages: Math.ceil(result.rowCount / limit),
+            data: queryResult.rows,
+            msg: "Get data success",
+          };
+          return resolve(sendResponse);
+        }
+        let sendResponse = {
+          totalData: result.rowCount,
+          next: nextResponse,
+          previous: previousResponse,
+          totalPages: null,
+          data: queryResult.rows,
+          msg: "Get data success",
+        };
+        return resolve(sendResponse);
+      });
     });
   });
 };
