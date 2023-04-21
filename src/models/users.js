@@ -100,7 +100,7 @@ const getProfile = (payload) => {
   const { user_id } = payload;
   return new Promise((resolve, reject) => {
     const query =
-      "select u.email, u.firstname, u.lastname, g.name as gender, u.image, r.name as role, u.created_at, u.updated_at, u.last_login, u.key_change_password from users u join roles r on u.role_id =r.id join genders g on u.gender_id = g.id where u.id = $1";
+      "select u.email, u.firstname, u.lastname, g.name as gender, u.image, u.notelp, r.name as role, u.created_at, u.updated_at, u.last_login, u.key_change_password from users u join roles r on u.role_id =r.id join genders g on u.gender_id = g.id where u.id = $1";
     db.query(query, [user_id], (error, result) => {
       if (error) {
         return reject(error);
