@@ -52,76 +52,71 @@ const deleteTask = (params) => {
   });
 };
 
-const getTasks = (payload, params) => {
+const getTasks = (payload, q) => {
   const { user_id } = payload;
   return new Promise((resolve, reject) => {
-    let query;
-    let expression;
-    let condition;
+    let query,
+      expression,
+      condition,
+      link = "?";
 
     query =
       "select t.id, t.user_id, s.name as status, t.title, t.description, t.created_at, t.updated_at from tasks t join status s on t.status_id = s.id where t.user_id = $1 ";
 
-    let link = "/tasks?";
-
-    switch (params.sort || params.status) {
+    switch (q.sort || q.status) {
       // Sort
       case "a-z":
         expression = "order by t.title asc ";
         query += expression;
-        link += "sort=" + `${params.sort}` + "&";
+        link += "sort=" + `${q.sort}` + "&";
         break;
       case "z-a":
         expression = "order by t.title desc ";
         query += expression;
-        link += "sort=" + `${params.sort}` + "&";
+        link += "sort=" + `${q.sort}` + "&";
         break;
       case "old":
         expression = "order by t.created_at asc ";
         query += expression;
-        link += "sort=" + `${params.sort}` + "&";
+        link += "sort=" + `${q.sort}` + "&";
         break;
       case "new":
         expression = "order by t.created_at desc ";
         query += expression;
-        link += "sort=" + `${params.sort}` + "&";
+        link += "sort=" + `${q.sort}` + "&";
         break;
       case "updated":
         expression = "order by t.created_at desc ";
         query += expression;
-        link += "sort=" + `${params.sort}` + "&";
+        link += "sort=" + `${q.sort}` + "&";
         break;
       // Status
-      case `${params.status}`:
-        query += "and s.name = " + `'${params.status}'`;
-        link += "status=" + `${params.status}` + "&";
+      case `${q.status}`:
+        query += "and s.name = " + `'${q.status}'`;
+        link += "status=" + `${q.status}` + "&";
         break;
       // Sort & Status
-      case params.status === "ongoing" && params.sort === "old":
+      case q.status === "ongoing" && q.sort === "old":
         condition = "and s.name = 'ongoing' ";
         expression = "order by t.created_at asc ";
         query += condition + expression;
-        link +=
-          "status=" + `${params.status}` + "sort=" + `${params.sort}` + "&";
+        link += "status=" + `${q.status}` + "sort=" + `${q.sort}` + "&";
         break;
-      case params.status === "ongoing" && params.sort === "a-z":
+      case q.status === "ongoing" && q.sort === "a-z":
         condition = "and s.name = 'ongoing' ";
         expression = "order by t.title asc ";
         query += condition + expression;
-        link +=
-          "status=" + `${params.status}` + "sort=" + `${params.sort}` + "&";
+        link += "status=" + `${q.status}` + "sort=" + `${q.sort}` + "&";
         break;
-      case params.status === "ongoing" && params.sort === "new":
+      case q.status === "ongoing" && q.sort === "new":
         condition = "and s.name = 'ongoing' ";
         expression = "order by t.created_at desc ";
-        link +=
-          "status=" + `${params.status}` + "sort=" + `${params.sort}` + "&";
+        link += "status=" + `${q.status}` + "sort=" + `${q.sort}` + "&";
         break;
-      case params.status === "ongoing" && params.sort === "updated":
+      case q.status === "ongoing" && q.sort === "updated":
         condition = "and s.name = 'ongoing' ";
         expression = "order by t.updated_at desc ";
-        link +=
-          "status=" + `${params.status}` + "sort=" + `${params.sort}` + "&";
+        link += "status=" + `${q.status}` + "sort=" + `${q.sort}` + "&";
       default:
         query;
     }
@@ -129,9 +124,9 @@ const getTasks = (payload, params) => {
     let limitQuery = "";
     let values = [];
 
-    if (params.page && params.limit) {
-      let page = Number(params.page);
-      let limit = Number(params.limit);
+    if (q.page && q.limit) {
+      let page = Number(q.page);
+      let limit = Number(q.limit);
       let offset = (page - 1) * limit;
       limitQuery += query + "limit $2 offset $3";
       values.push(user_id, limit, offset);
@@ -168,9 +163,9 @@ const getTasks = (payload, params) => {
         let nextResponse = null;
         let previousResponse = null;
 
-        if (params.page && params.limit) {
-          let page = parseInt(params.page);
-          let limit = parseInt(params.limit);
+        if (q.page && q.limit) {
+          let page = parseInt(q.page);
+          let limit = parseInt(q.limit);
           let start = (page - 1) * limit;
           let end = page * limit;
           let next = "";
