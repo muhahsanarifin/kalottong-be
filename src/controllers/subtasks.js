@@ -54,11 +54,8 @@ const getSubtasks = async (req, res) => {
 
 const getSubTask = async (req, res) => {
   try {
-    const response = await subtasksModals.getSubtask(req.params);
-    res.status(200).json({
-      data: response.rows,
-      msg: "Get data success",
-    });
+    const response = await subtasksModals.getSubtask(req.params, req.query);
+    res.status(200).send(response);
   } catch (error) {
     res.status(500).json({
       msg: "Internet server error",
