@@ -1,6 +1,7 @@
 const db = require("../configs/postgre");
 
-const createTasks = (user_id, body) => {
+const createTasks = (payload, body) => {
+  const { user_id } = payload;
   const { title, description, created_at } = body;
 
   return new Promise((resolve, reject) => {
@@ -11,7 +12,6 @@ const createTasks = (user_id, body) => {
 
     db.query(query, values, (error, result) => {
       if (error) {
-        console.log(error);
         reject(error);
       }
       return resolve(result);
@@ -19,22 +19,62 @@ const createTasks = (user_id, body) => {
   });
 };
 
-const editTask = (params, body) => {
+const editTask = (payload, params, body) => {
   return new Promise((resolve, reject) => {
-    const { title, description } = body;
+    const { user_id } = payload;
     const { id } = params;
+    let { title, description, status_id, updated_at } = body;
 
-    const query =
-      "update tasks set title = $2, description = $3, updated_at = $4 where id = $1 returning *";
+    const getExistTaskQuery =
+      "select t.id, t.user_id, t.status_id, t.title, t.description, t.created_at, t.updated_at from tasks t where t.user_id = $1 and t.id = $2 ";
 
-    const values = [id, title, description, new Date()];
-
-    db.query(query, values, (error, result) => {
+    db.query(getExistTaskQuery, [user_id, id], (error, taskResult) => {
       if (error) {
         return reject(error);
       }
-      return resolve(result);
+
+      if (title.length === 0) {
+        title = taskResult.rows[0].title;
+      }
+
+      if (description.length === 0) {
+        description = taskResult.rows[0].description;
+      }
+
+      if (status_id.length === 0) {
+        status_id = taskResult.rows[0].status_id;
+      }
+
+      if (updated_at.length === 0) {
+        updated_at = new Date();
+      }
+
+      const query =
+        "update tasks set title = $2, description = $3, status_id = $4, updated_at = $5 where id = $1 returning *";
+
+      db.query(
+        query,
+        [id, title, description, status_id, updated_at],
+        (error, result) => {
+          if (error) {
+            return reject(error);
+          }
+          return resolve(result);
+        }
+      );
     });
+
+    // const query =
+    //   "update tasks set title = $2, description = $3, updated_at = $4 where id = $1 returning *";
+
+    // const values = [id, title, description, updated_at];
+
+    // db.query(query, values, (error, result) => {
+    //   if (error) {
+    //     return reject(error);
+    //   }
+    //   return resolve(result);
+    // });
   });
 };
 
