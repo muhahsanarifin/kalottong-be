@@ -7,18 +7,21 @@ const {
   errorHandler,
 } = require("../middlewares/memoryUpload");
 const profileUpload = require("../middlewares/profileUpload");
+const validate = require("../middlewares/validate");
 
 const usersRouter = express.Router();
 
 usersRouter.patch(
   "/profile/edit",
   usersMiddleware.checkLogin,
+  validate.body("firstname", "lastname", "gender_id"),
   usersControllers.updateProfile
 );
 
 usersRouter.patch(
   "/profile/upload",
   usersMiddleware.checkLogin,
+  validate.body("image"),
   (req, res, next) =>
     singleMemoryUpload("image")(req, res, (err) => {
       errorHandler(err, res, next);
@@ -29,6 +32,7 @@ usersRouter.patch(
 
 usersRouter.patch(
   "/notelp/edit",
+  validate.body("notelp"),
   usersMiddleware.checkLogin,
   usersControllers.updateNoTelp
 );
