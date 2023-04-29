@@ -30,17 +30,34 @@ const deleteSubtask = (params) => {
 
 const editSubtask = (params, body) => {
   return new Promise((resolve, reject) => {
-    const { title } = body;
+    let { title, status_id } = body;
     const { id } = params;
 
-    const query =
-      "update subtasks set title = $2, updated_at = $3 where id = $1";
+    const retriveSubtask =
+      "select s.id, s.tasks_id, s.status_id, s.title, s.created_at, s.updated_at from subtasks s where s.id = $1";
 
-    db.query(query, [id, title, new Date()], (error, result) => {
+    db.query(retriveSubtask, [id], (error, subtaskResult) => {
       if (error) {
-        return reject(error);
+        return resolve(error);
       }
-      return resolve(result);
+
+      if (title.length === 0) {
+        title = subtaskResult.rows[0].title;
+      }
+
+      if (status_id.length === 0) {
+        status_id = subtaskResult.rows[0].status_id;
+      }
+
+      const query =
+        "update subtasks set title = $2, status_id = $3, updated_at = $4 where id = $1 returning *";
+
+      db.query(query, [id, title, status_id, new Date()], (error, result) => {
+        if (error) {
+          return reject(error);
+        }
+        return resolve(result);
+      });
     });
   });
 };
