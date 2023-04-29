@@ -8,18 +8,18 @@ const updateProfile = (payload, body) => {
     const getExistProfileQuery =
       "select firstname, lastname, gender_id from users where id = $1";
 
-    db.query(getExistProfileQuery, [user_id], (error, resultProfile) => {
+    db.query(getExistProfileQuery, [user_id], (error, profileResult) => {
       if (error) {
         return reject(error);
       }
       if (firstname.length === 0) {
-        firstname = resultProfile.rows[0].firstname;
+        firstname = profileResult.rows[0].firstname;
       }
       if (lastname.length === 0) {
-        lastname = resultProfile.rows[0].lastname;
+        lastname = profileResult.rows[0].lastname;
       }
       if (gender_id.length === 0) {
-        gender_id = resultProfile.rows[0].gender_id;
+        gender_id = profileResult.rows[0].gender_id;
       }
 
       const query =
