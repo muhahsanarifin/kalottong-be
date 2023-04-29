@@ -63,18 +63,6 @@ const editTask = (payload, params, body) => {
         }
       );
     });
-
-    // const query =
-    //   "update tasks set title = $2, description = $3, updated_at = $4 where id = $1 returning *";
-
-    // const values = [id, title, description, updated_at];
-
-    // db.query(query, values, (error, result) => {
-    //   if (error) {
-    //     return reject(error);
-    //   }
-    //   return resolve(result);
-    // });
   });
 };
 
