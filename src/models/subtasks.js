@@ -28,6 +28,20 @@ const deleteSubtask = (params) => {
   });
 };
 
+const deleteSubtasksByTaskId = (params) => {
+  return new Promise((resolve, reject) => {
+    const { id } = params;
+    const query = "delete from subtasks where tasks_id = $1";
+    db.query(query, [id], (error, result) => {
+      console.log("Error:", error);
+      if (error) {
+        return reject(error);
+      }
+      return resolve(result);
+    });
+  });
+};
+
 const editSubtask = (params, body) => {
   return new Promise((resolve, reject) => {
     let { title, status_id } = body;
@@ -62,11 +76,12 @@ const editSubtask = (params, body) => {
   });
 };
 
-const getSubtasks = () => {
+const getSubtasks = (params) => {
+  const { id } = params;
   return new Promise((resolve, reject) => {
-    const query = "select * from subtasks";
+    const query = "select * from subtasks where tasks_id = $1";
 
-    db.query(query, (error, result) => {
+    db.query(query, [id], (error, result) => {
       if (error) {
         return reject(error);
       }
@@ -173,6 +188,7 @@ const getSubtask = (params, q) => {
 module.exports = {
   createSubtask,
   deleteSubtask,
+  deleteSubtasksByTaskId,
   editSubtask,
   getSubtasks,
   getSubtask,
