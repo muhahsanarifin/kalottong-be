@@ -35,7 +35,9 @@ const editTask = async (req, res) => {
 
 const deleteTask = async (req, res) => {
   try {
-    const resultSubtasksByIdTask = await subtaskModels.getSubtasks(req.params);
+    const resultSubtasksByIdTask = await subtaskModels.getSubtasksByIdTask(
+      req.params
+    );
 
     if (resultSubtasksByIdTask.rows.length > 0)
       await subtaskModels.deleteSubtasksByTaskId(req.params);
