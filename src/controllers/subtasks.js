@@ -40,25 +40,13 @@ const editSubtask = async (req, res) => {
 
 const getSubtasks = async (req, res) => {
   try {
-    const response = await subtasksModals.getSubtasks();
-    res.status(200).json({
-      data: response.rows,
-      msg: "Get data success",
-    });
-  } catch (error) {
-    res.status(500).json({
-      msg: "Internet server error",
-    });
-  }
-};
-
-const getSubTask = async (req, res) => {
-  try {
-    const response = await subtasksModals.getSubtask(req.params, req.query);
+    const response = await subtasksModals.getSubtasks(req.query);
     res.status(200).send(response);
-  } catch (error) {
-    res.status(500).json({
-      msg: "Internet server error",
+  } catch (obErr) {
+    const statusCode = obErr.statusCode || 500;
+    res.status(statusCode).json({
+      msg: obErr?.msg,
+      data: obErr?.data,
     });
   }
 };
@@ -68,5 +56,4 @@ module.exports = {
   deleteSubtask,
   editSubtask,
   getSubtasks,
-  getSubTask,
 };

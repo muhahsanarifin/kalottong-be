@@ -33,7 +33,6 @@ const deleteSubtasksByTaskId = (params) => {
     const { id } = params;
     const query = "delete from subtasks where tasks_id = $1";
     db.query(query, [id], (error, result) => {
-      console.log("Error:", error);
       if (error) {
         return reject(error);
       }
@@ -76,7 +75,7 @@ const editSubtask = (params, body) => {
   });
 };
 
-const getSubtasks = (params) => {
+const getSubtasksByIdTask = (params) => {
   const { id } = params;
   return new Promise((resolve, reject) => {
     const query = "select * from subtasks where tasks_id = $1";
@@ -90,14 +89,12 @@ const getSubtasks = (params) => {
   });
 };
 
-const getSubtask = (params, q) => {
-  const { taskId } = params;
-
+const getSubtasks = (q) => {
   return new Promise((resolve, reject) => {
     let query,
       link = "?";
 
-    query = "select * from subtasks where tasks_id = $1 ";
+    query = "select * from subtasks ";
 
     let limitQuery = "";
     let values = [];
@@ -106,15 +103,14 @@ const getSubtask = (params, q) => {
       let page = Number(q.page);
       let limit = Number(q.limit);
       let offset = (page - 1) * limit;
-      limitQuery = query + "limit $2 offset $3";
-      values.push(taskId, limit, offset);
+      limitQuery = query + "limit $1 offset $2";
+      values.push(limit, offset);
     } else {
       limitQuery = query;
-      values.push(taskId);
     }
 
-    db.query(query, [taskId], (error, result) => {
-      if (result.rows.length < 1) {
+    db.query(query, (error, result) => {
+      if (result.rows.length === 0) {
         return reject({
           data: result.rows,
           statusCode: 404,
@@ -125,7 +121,7 @@ const getSubtask = (params, q) => {
         return reject(error);
       }
       db.query(limitQuery, values, (error, queryResult) => {
-        if (queryResult.rows.length < 1) {
+        if (queryResult.rows.length === 0) {
           return reject({
             data: result.rows,
             statusCode: 404,
@@ -191,5 +187,5 @@ module.exports = {
   deleteSubtasksByTaskId,
   editSubtask,
   getSubtasks,
-  getSubtask,
+  getSubtasksByIdTask,
 };
