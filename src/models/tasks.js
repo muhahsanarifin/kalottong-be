@@ -91,7 +91,7 @@ const getTasks = (payload, q) => {
     query =
       "select t.id, t.user_id, s.name as status, t.title, t.description, t.created_at, t.updated_at from tasks t join status s on t.status_id = s.id where t.user_id = $1 ";
 
-    switch (q.sort || q.status) {
+    switch (q.sort) {
       // Sort
       case "a-z":
         expression = "order by t.title asc ";
@@ -118,33 +118,56 @@ const getTasks = (payload, q) => {
         query += expression;
         link += "sort=" + `${q.sort}` + "&";
         break;
+      default:
+        query;
+    }
+
+    switch (q.status) {
       // Status
       case `${q.status}`:
         query += "and s.name = " + `'${q.status}'`;
         link += "status=" + `${q.status}` + "&";
         break;
+      default:
+        query;
+    }
+
+    switch (q.status && q.sort) {
       // Sort & Status
-      case q.status === "ongoing" && q.sort === "old":
+      case q.status === "ongoing" && "old":
+        query =
+          "select t.id, t.user_id, s.name as status, t.title, t.description, t.created_at, t.updated_at from tasks t join status s on t.status_id = s.id where t.user_id = $1 ";
         condition = "and s.name = 'ongoing' ";
         expression = "order by t.created_at asc ";
         query += condition + expression;
-        link += "status=" + `${q.status}` + "sort=" + `${q.sort}` + "&";
         break;
-      case q.status === "ongoing" && q.sort === "a-z":
+      case q.status === "ongoing" && "a-z":
+        query =
+          "select t.id, t.user_id, s.name as status, t.title, t.description, t.created_at, t.updated_at from tasks t join status s on t.status_id = s.id where t.user_id = $1 ";
         condition = "and s.name = 'ongoing' ";
         expression = "order by t.title asc ";
         query += condition + expression;
-        link += "status=" + `${q.status}` + "sort=" + `${q.sort}` + "&";
         break;
-      case q.status === "ongoing" && q.sort === "new":
+      case q.status === "ongoing" && "z-a":
+        query =
+          "select t.id, t.user_id, s.name as status, t.title, t.description, t.created_at, t.updated_at from tasks t join status s on t.status_id = s.id where t.user_id = $1 ";
+        condition = "and s.name = 'ongoing' ";
+        expression = "order by t.title desc ";
+        query += condition + expression;
+        break;
+      case q.status === "ongoing" && "new":
+        query =
+          "select t.id, t.user_id, s.name as status, t.title, t.description, t.created_at, t.updated_at from tasks t join status s on t.status_id = s.id where t.user_id = $1 ";
         condition = "and s.name = 'ongoing' ";
         expression = "order by t.created_at desc ";
-        link += "status=" + `${q.status}` + "sort=" + `${q.sort}` + "&";
+        query += condition + expression;
         break;
-      case q.status === "ongoing" && q.sort === "updated":
+      case q.status === "ongoing" && "updated":
+        query =
+          "select t.id, t.user_id, s.name as status, t.title, t.description, t.created_at, t.updated_at from tasks t join status s on t.status_id = s.id where t.user_id = $1 ";
         condition = "and s.name = 'ongoing' ";
         expression = "order by t.updated_at desc ";
-        link += "status=" + `${q.status}` + "sort=" + `${q.sort}` + "&";
+        query += condition + expression;
       default:
         query;
     }
@@ -164,8 +187,7 @@ const getTasks = (payload, q) => {
     }
 
     db.query(query, [user_id], (error, result) => {
-      // console.log("Query:", query);
-      if (result.rows.length < 1) {
+      if (result.rows.length === 0) {
         return reject({
           data: result.rows,
           statusCode: 404,
@@ -176,8 +198,7 @@ const getTasks = (payload, q) => {
         return reject(error);
       }
       db.query(limitQuery, values, (error, queryResult) => {
-        // console.log("limit Query:", limitQuery);
-        if (result.rows.length < 1) {
+        if (result.rows.length === 0) {
           return reject({
             data: queryResult.rows,
             statusCode: 404,
