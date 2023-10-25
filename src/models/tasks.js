@@ -2,13 +2,22 @@ const db = require("../configs/postgre");
 
 const createTasks = (payload, body) => {
   const { user_id } = payload;
-  const { title, description, created_at } = body;
+  const { title, description, date_and_time } = body;
+
+  console.log(body);
 
   return new Promise((resolve, reject) => {
     const query =
-      "insert into tasks (user_id, status_id, title, description, created_at) values ($1, $2, $3, $4, $5)";
+      "insert into tasks (user_id, status_id, title, description, date_and_time, created_at) values ($1, $2, $3, $4, $5, $6)";
 
-    const values = [user_id, "1", title, description, created_at];
+    const values = [
+      user_id,
+      "1",
+      title,
+      description,
+      date_and_time,
+      new Date(),
+    ];
 
     db.query(query, values, (error, result) => {
       if (error) {
@@ -23,10 +32,10 @@ const editTask = (payload, params, body) => {
   return new Promise((resolve, reject) => {
     const { user_id } = payload;
     const { id } = params;
-    let { title, description, status_id, updated_at } = body;
+    let { title, description, status_id, date_and_time } = body;
 
     const getExistTaskQuery =
-      "select t.id, t.user_id, t.status_id, t.title, t.description, t.created_at, t.updated_at from tasks t where t.user_id = $1 and t.id = $2 ";
+      "select t.id, t.user_id, t.status_id, t.title, t.description, t.date_and_time, t.created_at, t.updated_at from tasks t where t.user_id = $1 and t.id = $2 ";
 
     db.query(getExistTaskQuery, [user_id, id], (error, taskResult) => {
       if (error) {
@@ -45,17 +54,18 @@ const editTask = (payload, params, body) => {
         status_id = taskResult.rows[0].status_id;
       }
 
-      if (updated_at.length === 0) {
-        updated_at = new Date();
+      if (date_and_time.length === 0) {
+        date_and_time = new Date();
       }
 
       const query =
-        "update tasks set title = $2, description = $3, status_id = $4, updated_at = $5 where id = $1 returning *";
+        "update tasks set title = $2, description = $3, status_id = $4, date_and_time = $5, updated_at = $6 where id = $1 returning *";
 
       db.query(
         query,
-        [id, title, description, status_id, updated_at],
+        [id, title, description, status_id, date_and_time, new Date()],
         (error, result) => {
+          console.log(result);
           if (error) {
             return reject(error);
           }
@@ -89,7 +99,7 @@ const getTasks = (payload, q) => {
       link = "?";
 
     query =
-      "select t.id, t.user_id, s.name as status, t.title, t.description, t.created_at, t.updated_at from tasks t join status s on t.status_id = s.id where t.user_id = $1 ";
+      "select t.id, t.user_id, s.name as status, t.title, t.description, t.date_and_time, t.created_at, t.updated_at from tasks t join status s on t.status_id = s.id where t.user_id = $1 ";
 
     switch (q.sort) {
       // Sort
@@ -136,35 +146,35 @@ const getTasks = (payload, q) => {
       // Sort & Status
       case q.status === "ongoing" && "old":
         query =
-          "select t.id, t.user_id, s.name as status, t.title, t.description, t.created_at, t.updated_at from tasks t join status s on t.status_id = s.id where t.user_id = $1 ";
+          "select t.id, t.user_id, s.name as status, t.title, t.description, t.date_and_time, t.created_at, t.updated_at from tasks t join status s on t.status_id = s.id where t.user_id = $1 ";
         condition = "and s.name = 'ongoing' ";
         expression = "order by t.created_at asc ";
         query += condition + expression;
         break;
       case q.status === "ongoing" && "a-z":
         query =
-          "select t.id, t.user_id, s.name as status, t.title, t.description, t.created_at, t.updated_at from tasks t join status s on t.status_id = s.id where t.user_id = $1 ";
+          "select t.id, t.user_id, s.name as status, t.title, t.description, t.date_and_time, t.created_at, t.updated_at from tasks t join status s on t.status_id = s.id where t.user_id = $1 ";
         condition = "and s.name = 'ongoing' ";
         expression = "order by t.title asc ";
         query += condition + expression;
         break;
       case q.status === "ongoing" && "z-a":
         query =
-          "select t.id, t.user_id, s.name as status, t.title, t.description, t.created_at, t.updated_at from tasks t join status s on t.status_id = s.id where t.user_id = $1 ";
+          "select t.id, t.user_id, s.name as status, t.title, t.description, t.date_and_time, t.created_at, t.updated_at from tasks t join status s on t.status_id = s.id where t.user_id = $1 ";
         condition = "and s.name = 'ongoing' ";
         expression = "order by t.title desc ";
         query += condition + expression;
         break;
       case q.status === "ongoing" && "new":
         query =
-          "select t.id, t.user_id, s.name as status, t.title, t.description, t.created_at, t.updated_at from tasks t join status s on t.status_id = s.id where t.user_id = $1 ";
+          "select t.id, t.user_id, s.name as status, t.title, t.description, t.date_and_time, t.created_at, t.updated_at from tasks t join status s on t.status_id = s.id where t.user_id = $1 ";
         condition = "and s.name = 'ongoing' ";
         expression = "order by t.created_at desc ";
         query += condition + expression;
         break;
       case q.status === "ongoing" && "updated":
         query =
-          "select t.id, t.user_id, s.name as status, t.title, t.description, t.created_at, t.updated_at from tasks t join status s on t.status_id = s.id where t.user_id = $1 ";
+          "select t.id, t.user_id, s.name as status, t.title, t.description, t.date_and_time, t.created_at, t.updated_at from tasks t join status s on t.status_id = s.id where t.user_id = $1 ";
         condition = "and s.name = 'ongoing' ";
         expression = "order by t.updated_at desc ";
         query += condition + expression;

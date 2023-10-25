@@ -8,7 +8,7 @@ const server = express();
 
 server.use(cors());
 server.use(express.json());
-server.use(express.urlencoded({ extended: false }));
+server.use(express.urlencoded({ extended: true }));
 server.use(
   morgan(":method :url :status :response-time ms - :res[content-length]")
 );

@@ -9,13 +9,13 @@ const validate = require("../middlewares/validate");
 tasksRouter.post(
   "/create",
   tasksMiddleware.checkLogin,
-  validate.body("title", "description", "created_at"),
+  validate.body("title", "description", "date_and_time"),
   tasksControllers.createTasks
 );
 tasksRouter.patch(
   "/edit/:id",
   tasksMiddleware.checkLogin,
-  validate.body("title", "description", "status_id", "updated_at"),
+  validate.body("title", "description", "status_id", "date_and_time"),
   tasksControllers.editTask
 );
 
